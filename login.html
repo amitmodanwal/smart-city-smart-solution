@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login window</title>
+     <link rel="stylesheet" href = "login.css">
+         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div class ="login">
+        <div class = "login2">
+            <h2 class = "txt">LOGIN WINDOW</h2>
+            <h3 class = "txt">New User?<a href="signup.html" class = "txt2">Sign up</a></h3>
+            <div class = "ds1">
+             <i class="fa-solid fa-user"></i>
+            <input type = "text" placeholder = "username" />
+            </div>
+            <div class ="ds2">
+            <i class="fa-solid fa-lock"></i>
+            <input type = "password" placeholder= "password" />
+            </div>
+        
+            <p class = "log"><a href = "fornt.html">Public Login</a></p>
+                        <p class = "log"><a href = "authority.html">Authority Login</a></p>
+            
+            <p class ="pass">Forgot your password ? <u>   Get it back</u></p>
+        </div>
+    </div>
+    <script>
+  // Vote function
+  function vote() {
+    fetch("http://localhost:3000/vote", { method: "POST" })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("voteCount").innerText =
+          "Total Votes: " + (data.totalVotes || 1);
+      })
+      .catch(err => alert("Backend not connected"));
+  }
+
+  // Issue report function
+  function reportIssue() {
+    const issueType = document.getElementById("issueType").value;
+    const location = document.getElementById("location").value;
+    const description = document.getElementById("description").value;
+
+    fetch("http://localhost:3000/report", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ issueType, location, description })
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("status").innerText =
+        "Issue submitted successfully ✅";
+      // Clear form
+      document.getElementById("location").value = "";
+      document.getElementById("description").value = "";
+    })
+    .catch(err => {
+      document.getElementById("status").innerText =
+        "Backend not connected ❌";
+    });
+  }
+</script>
+<h2>Vote for Issue</h2>
+<button onclick="vote()">Vote</button>
+<p id="voteCount">Total Votes: 0</p>
+
+<hr>
+
+<h2>Report an Issue</h2>
+<select id="issueType">
+  <option value="Road Cleaning">Road Cleaning</option>
+  <option value="Water Leakage">Water Leakage</option>
+  <option value="Street Light">Street Light Issue</option>
+</select>
+<br><br>
+<input type="text" id="location" placeholder="Enter Location"><br><br>
+<textarea id="description" placeholder="Describe the issue"></textarea><br><br>
+<button onclick="reportIssue()">Submit Issue</button>
+<p id="status"></p>
+
+<script>
+document.getElementById("loginForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  const res = await fetch("http://localhost:3000/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password })
+  });
+
+  const data = await res.json();
+  alert(data.message);
+
+  if (data.success && data.role === "authority") {
+    window.location.href = "authority.html";
+  }
+});
+</script>
+</body>
+</html>
